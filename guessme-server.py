@@ -23,11 +23,11 @@ class Game:
             return "Correct! You win!\n"
         elif guess < self.answer:
             if self.guesses_left == 0:
-                self.state = "HAHA Try Agin"
+                self.state = "HAHA Try Again"
             return "Too low.\n"
         else:
             if self.guesses_left == 0:
-                self.state = "HAHA Try Agin"
+                self.state = "HAHA Try Again"
             return "Too high.\n"
 
 sel = selectors.DefaultSelector()
