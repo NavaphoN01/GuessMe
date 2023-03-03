@@ -42,6 +42,27 @@ def accept_wrapper(sock):
     sel.register(conn, events, data=data)
     socks.append(conn)
 
+def service_connection(key, mask):
+    sock = key.fileobj
+    data = key.data
+    game = data.game
+    if mask & selectors.EVENT_READ:
+        recv_data = sock.recv(1024)
+        if recv_data:
+            guess = int(recv_data.decode())
+            send_data = game.handle_guess(guess).encode()
+            sock.sendall(send_data)
+            if guess == game.answer or game.guesses_left == 0:
+                print(f"Closing connection to {data.addr}")
+                sel.unregister(sock)
+                sock.close()
+                socks.remove(sock)
+        else:
+            print(f"Closing connection to {data.addr}")
+            sel.unregister(sock)
+            sock.close()
+            socks.remove(sock)
+
 try:
     while True:
         events = sel.select(timeout=None)
@@ -49,7 +70,7 @@ try:
             if key.data is None:
                  accept_wrapper(key.fileobj)
             else:
-                pass
+                service_connection(key, mask)
 except KeyboardInterrupt:
     print("Caught keyboard interrupt, exiting")
 finally:
