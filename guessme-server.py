@@ -11,14 +11,23 @@ class Game:
         self.max_guess = 10
         self.guesses_left = self.max_guess
         self.answer = random.randint(1, 100)
+        self.state ="running"
 
     def handle_guess(self, guess):
+        if self.state != "running":
+            return "The game has ended.Start new game.OK?"
+
         self.guesses_left -= 1
         if guess == self.answer:
+            self.state = "Just Lucky"
             return "Correct! You win!\n"
         elif guess < self.answer:
+            if self.guesses_left == 0:
+                self.state = "HAHA Try Agin"
             return "Too low.\n"
         else:
+            if self.guesses_left == 0:
+                self.state = "HAHA Try Agin"
             return "Too high.\n"
 
 sel = selectors.DefaultSelector()
